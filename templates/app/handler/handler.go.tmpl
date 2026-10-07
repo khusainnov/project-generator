@@ -1,0 +1,39 @@
+package handler
+
+import (
+	"context"
+	"net/http"
+
+	"{{.Module}}/app/infra/log"
+	"{{.Module}}/app/processor"
+	reqParams "{{.Module}}/specs/server/params/model"
+	respParams "{{.Module}}/specs/server/response/model"
+)
+
+var _ API = (*Handler)(nil)
+
+type API interface {
+	EchoAPI
+}
+
+type EchoAPI interface {
+	Echo(r *http.Request, params *reqParams.EchoParams, resp *respParams.EchoResponse) error
+}
+
+// processor interface example
+type Processor interface {
+	Echo(ctx context.Context) error
+}
+
+// Handler example
+type Handler struct {
+	proc   Processor
+	logger *log.LoggerCtx
+}
+
+func New(logger *log.LoggerCtx, proc *processor.Processor) *Handler {
+	return &Handler{
+		logger: logger,
+		proc:   proc,
+	}
+}
