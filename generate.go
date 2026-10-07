@@ -11,8 +11,6 @@ import (
 	"text/template"
 )
 
-// all: keeps dotfile templates from being dropped silently.
-//
 //go:embed all:templates
 var templatesFS embed.FS
 
@@ -22,7 +20,6 @@ const (
 	modulePrefix = "github.com/khusainnov/"
 )
 
-// emptyDirs belong to the layout but hold no generated file.
 var emptyDirs = []string{
 	"app/helpers",
 	"app/model",
@@ -34,13 +31,15 @@ type Project struct {
 	Name      string
 	Module    string
 	EnvPrefix string
+	GoVersion string
 }
 
-func newProject(name string) Project {
+func newProject(name, goVer string) Project {
 	return Project{
 		Name:      name,
 		Module:    modulePrefix + name,
 		EnvPrefix: strings.ToUpper(name),
+		GoVersion: goVer,
 	}
 }
 
@@ -77,7 +76,6 @@ func generateProjectStructure(p Project) error {
 	})
 }
 
-// Templates are parsed one at a time: text/template has no recursive glob.
 func render(path string, p Project) ([]byte, error) {
 	tmpl, err := template.New(filepath.Base(path)).ParseFS(templatesFS, path)
 	if err != nil {
@@ -92,7 +90,6 @@ func render(path string, p Project) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// templates/app/app.go.tmpl -> app/app.go
 func outputPath(path string) string {
 	rel := strings.TrimSuffix(strings.TrimPrefix(path, templateRoot+"/"), templateExt)
 
