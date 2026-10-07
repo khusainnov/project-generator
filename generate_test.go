@@ -9,7 +9,7 @@ import (
 )
 
 func TestTemplatesRender(t *testing.T) {
-	p := newProject("myservice", "1.23")
+	p := newProject("myservice", "", "1.23")
 
 	paths, err := fs.Glob(templatesFS, templateRoot)
 	if err != nil || len(paths) == 0 {
@@ -58,6 +58,16 @@ func TestTemplatesRender(t *testing.T) {
 
 	if rendered == 0 {
 		t.Fatal("no templates rendered")
+	}
+}
+
+func TestNewProjectModule(t *testing.T) {
+	if got := newProject("svc", "", "1.23").Module; got != modulePrefix+"svc" {
+		t.Errorf("empty module = %q, want %q", got, modulePrefix+"svc")
+	}
+
+	if got := newProject("svc", "example.com/foo/bar", "1.23").Module; got != "example.com/foo/bar" {
+		t.Errorf("explicit module = %q, want example.com/foo/bar", got)
 	}
 }
 

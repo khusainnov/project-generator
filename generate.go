@@ -28,10 +28,14 @@ type Project struct {
 	GoVersion string
 }
 
-func newProject(name, goVer string) Project {
+func newProject(name, module, goVer string) Project {
+	if module == "" {
+		module = modulePrefix + name
+	}
+
 	return Project{
 		Name:      name,
-		Module:    modulePrefix + name,
+		Module:    module,
 		EnvPrefix: strings.ToUpper(name),
 		GoVersion: goVer,
 	}
