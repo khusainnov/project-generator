@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 )
@@ -36,9 +37,21 @@ func newProject(name, module, goVer string) Project {
 	return Project{
 		Name:      name,
 		Module:    module,
-		EnvPrefix: strings.ToUpper(name),
+		EnvPrefix: envPrefix(name),
 		GoVersion: goVer,
 	}
+}
+
+var notEnvNameChar = regexp.MustCompile(`[^A-Z0-9_]`)
+
+func envPrefix(name string) string {
+	s := notEnvNameChar.ReplaceAllString(strings.ToUpper(name), "_")
+
+	if s == "" || (s[0] >= '0' && s[0] <= '9') {
+		return "_" + s
+	}
+
+	return s
 }
 
 func generateProjectStructure(p Project) error {

@@ -5,7 +5,7 @@
 ## Creates a simple project structure with an example that can be run immediately
 
 * First step is create a build (`make build`)
-* Second step (`./project-gen {app_name}`)
+* Second step (`./bin/project-gen {app_name}`)
 
 Or in one step: `make gen NAME={app_name}`
 
@@ -13,10 +13,10 @@ Or in one step: `make gen NAME={app_name}`
 
 * `-go {version}` — Go version written to `go.mod` and the Dockerfile base image.
   Defaults to the toolchain that built the generator, so pass it only when the
-  generated project must build on an older one: `./project-gen -go 1.24 myapp`.
+  generated project must build on an older one: `./bin/project-gen -go 1.24 myapp`.
 * `-module {path}` — module path for `go.mod` and every import.
   Defaults to `github.com/khusainnov/{app_name}`:
-  `./project-gen -module example.com/team/billing billing`
+  `./bin/project-gen -module example.com/team/billing billing`
 
 Flags go before the project name.
 

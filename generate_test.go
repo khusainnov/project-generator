@@ -71,6 +71,24 @@ func TestNewProjectModule(t *testing.T) {
 	}
 }
 
+func TestEnvPrefix(t *testing.T) {
+	tests := map[string]string{
+		"myservice":  "MYSERVICE",
+		"my-service": "MY_SERVICE",
+		"my.service": "MY_SERVICE",
+		"my_service": "MY_SERVICE",
+		"API2":       "API2",
+		"2fast":      "_2FAST",
+		"сервис":     "______",
+	}
+
+	for in, want := range tests {
+		if got := envPrefix(in); got != want {
+			t.Errorf("envPrefix(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
 func TestOutputPath(t *testing.T) {
 	tests := map[string]string{
 		"templates/app/app.go.tmpl":                        "app/app.go",

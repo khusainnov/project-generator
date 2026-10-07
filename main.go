@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -16,6 +17,11 @@ func main() {
 		os.Exit(1)
 	}
 	projectName := flag.Arg(0)
+
+	if projectName == "" || strings.ContainsRune(projectName, os.PathSeparator) {
+		fmt.Println("Имя проекта должно быть непустым и без разделителей пути")
+		os.Exit(1)
+	}
 
 	err := generateProjectStructure(newProject(projectName, *module, *goVer))
 	if err != nil {
