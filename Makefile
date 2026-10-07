@@ -1,7 +1,7 @@
 PROJECT_NAME?=project-gen
 
 build:
-	go build -o $(PROJECT_NAME) main.go
+	go build -o $(PROJECT_NAME) .
 
 gen:
 	@if [ -z "$(PROJECT_NAME)" ]; then \

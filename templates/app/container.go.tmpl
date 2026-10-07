@@ -1,0 +1,23 @@
+package app
+
+import (
+	"{{.Module}}/app/config"
+	"{{.Module}}/app/infra/log"
+	"{{.Module}}/app/service"
+	"go.uber.org/zap"
+)
+
+type Container struct {
+	Config   *config.Config
+	Logger   *log.LoggerCtx
+	Services *service.Services
+	//Prometheus *prometheus.Registry
+}
+
+func NewContainer(logger *zap.Logger, cfg *config.Config) *Container {
+	return &Container{
+		Config:   cfg,
+		Logger:   log.New(logger),
+		Services: service.NewServices(),
+	}
+}
