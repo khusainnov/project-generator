@@ -26,7 +26,7 @@ func Fields(ctx context.Context, fields []zapcore.Field) []zapcore.Field {
 	}
 
 	if l.MessageID != "" {
-		fields = append(fields, zap.String("message_id", l.Message))
+		fields = append(fields, zap.String("message_id", l.MessageID))
 	}
 
 	if l.HandlerName != "" {
@@ -86,11 +86,10 @@ func WithMsgKey(ctx context.Context, msgKey string) context.Context {
 
 func WithMessage(ctx context.Context, msg string) context.Context {
 	if l, ok := ctx.Value(key).(logCtx); ok {
-		l.MsgKey = msg
+		l.Message = msg
 
 		return context.WithValue(ctx, key, l)
 	}
 
 	return context.WithValue(ctx, key, logCtx{Message: msg})
 }
-

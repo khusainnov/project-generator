@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"net/http"
 
 	"{{.Module}}/app/infra/log"
 	"{{.Module}}/app/processor"
@@ -9,12 +10,14 @@ import (
 	respParams "{{.Module}}/specs/server/response/model"
 )
 
+var _ API = (*Handler)(nil)
+
 type API interface {
 	EchoAPI
 }
 
 type EchoAPI interface {
-	Echo(ctx context.Context, params *reqParams.EchoParams, resp *respParams.EchoResponse) error
+	Echo(r *http.Request, params *reqParams.EchoParams, resp *respParams.EchoResponse) error
 }
 
 // processor interface example
@@ -24,13 +27,13 @@ type Processor interface {
 
 // Handler example
 type Handler struct {
-	proc Processor
+	proc   Processor
 	logger *log.LoggerCtx
 }
 
 func New(logger *log.LoggerCtx, proc *processor.Processor) *Handler {
 	return &Handler{
 		logger: logger,
-		proc: proc,
+		proc:   proc,
 	}
 }

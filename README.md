@@ -7,4 +7,26 @@
 * First step is create a build (`make build`)
 * Second step (`./project-gen {app_name}`)
 
-#### For running generated project you need to use `deployment/local.env` 
+Or in one step: `make gen NAME={app_name}`
+
+#### Flags
+
+* `-go {version}` — Go version written to `go.mod` and the Dockerfile base image.
+  Defaults to the toolchain that built the generator, so pass it only when the
+  generated project must build on an older one: `./project-gen -go 1.24 myapp`.
+  Flags go before the project name.
+
+#### For running generated project you need to use `deployment/local.env`
+
+```sh
+cd {app_name}
+go mod tidy
+set -a && . ./deployment/local.env && set +a
+go run .
+curl -s -X POST http://localhost:5050/jsonrpc/v2 \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","method":"Handler.Echo","params":[{"message":"hello"}],"id":1}'
+```
+
+`go mod tidy` is required on a freshly generated project: the generator writes
+`go.mod` but no `go.sum`.

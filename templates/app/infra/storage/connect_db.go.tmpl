@@ -1,13 +1,13 @@
-package infra
+package storage
 
 import (
 	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"{{.Module}}/app/config"
 	"gitlab.com/khusainnov/driver/postgres"
 	"go.uber.org/zap"
+	"{{.Module}}/app/config"
 )
 
 type ClientImpl struct {
@@ -45,4 +45,3 @@ func New(log *zap.Logger, cfg *config.DB) (*ClientImpl, error) {
 func (db *ClientImpl) GetDB() *sqlx.DB {
 	return db.DB
 }
-

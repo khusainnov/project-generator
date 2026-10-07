@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"go/format"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -19,13 +20,6 @@ const (
 	templateExt  = ".tmpl"
 	modulePrefix = "github.com/khusainnov/"
 )
-
-var emptyDirs = []string{
-	"app/helpers",
-	"app/model",
-	"app/repository",
-	"specs/client",
-}
 
 type Project struct {
 	Name      string
@@ -44,13 +38,6 @@ func newProject(name, goVer string) Project {
 }
 
 func generateProjectStructure(p Project) error {
-	for _, dir := range emptyDirs {
-		err := os.MkdirAll(filepath.Join(p.Name, dir), 0755)
-		if err != nil {
-			return fmt.Errorf("failed to create dir %s: %w", dir, err)
-		}
-	}
-
 	return fs.WalkDir(templatesFS, templateRoot, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err
@@ -87,15 +74,18 @@ func render(path string, p Project) ([]byte, error) {
 		return nil, fmt.Errorf("failed to render template %s: %w", path, err)
 	}
 
-	return buf.Bytes(), nil
+	if !strings.HasSuffix(path, ".go"+templateExt) {
+		return buf.Bytes(), nil
+	}
+
+	src, err := format.Source(buf.Bytes())
+	if err != nil {
+		return nil, fmt.Errorf("template %s produced invalid Go: %w", path, err)
+	}
+
+	return src, nil
 }
 
 func outputPath(path string) string {
-	rel := strings.TrimSuffix(strings.TrimPrefix(path, templateRoot+"/"), templateExt)
-
-	if base := filepath.Base(rel); base == "gitignore" {
-		rel = filepath.Join(filepath.Dir(rel), "."+base)
-	}
-
-	return rel
+	return strings.TrimSuffix(strings.TrimPrefix(path, templateRoot+"/"), templateExt)
 }

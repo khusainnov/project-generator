@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -41,15 +42,15 @@ func (s *Server) Init(handlers *handler.Handler) error {
 		Handler: router,
 	}
 
-	if err := http.ListenAndServe(s.cfg.Addr, router); err != nil {
-		return fmt.Errorf("failed to start server: %w", err)
-	}
-
 	return nil
 }
 
 func (s *Server) Run() error {
-	if err := s.httpServer.ListenAndServe(); err != nil {
+	if s.httpServer == nil {
+		return fmt.Errorf("server is not initialized")
+	}
+
+	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("failed to start server: %w", err)
 	}
 
@@ -67,4 +68,3 @@ func (s *Server) Stop(ctx context.Context) error {
 
 	return nil
 }
-

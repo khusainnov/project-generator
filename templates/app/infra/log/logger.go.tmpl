@@ -52,4 +52,3 @@ func (l *LoggerCtx) logCtx(ctx context.Context, lvl zapcore.Level, m string, f .
 	f = Fields(ctx, f)
 	l.log.Log(lvl, msg(ctx, m), f...)
 }
-

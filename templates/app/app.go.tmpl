@@ -9,7 +9,7 @@ import (
 	"{{.Module}}/app/config"
 	"{{.Module}}/app/handler"
 	"{{.Module}}/app/infra/server"
-	//"{{.Module}}/app/infra/storage" 
+	//"{{.Module}}/app/infra/storage"
 	"{{.Module}}/app/processor"
 	//"{{.Module}}/app/repository"
 )
@@ -26,7 +26,8 @@ func New() *App {
 	cfg := config.NewFromEnv()
 
 	app := &App{
-		Cfg: cfg,
+		Cfg:  cfg,
+		done: make(chan struct{}),
 	}
 
 	log, err := app.CreateLogger()
